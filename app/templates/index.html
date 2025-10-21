@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Prices</title>
+    <script>
+        let stocks = {{ stocks | tojson }};
+        let index = 0;
+
+        function fetchStockPrice() {
+            let symbol = stocks[index];
+            fetch(`/price/${symbol}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('output').innerHTML = `Error fetching data for ${symbol}`;
+                    } else {
+                        document.getElementById('output').innerHTML = `
+                            <h2>${data.symbol}</h2>
+                            <p>Price: $${data.price}</p>
+                        `;
+                    }
+                });
+
+            index = (index + 1) % stocks.length; // Loop back after 10th
+        }
+
+        window.onload = function() {
+            fetchStockPrice(); // Show first stock immediately
+            setInterval(fetchStockPrice, 10000); // Every 10 seconds
+        };
+    </script>
+</head>
+<body>
+    <h1>Stock Price Viewer</h1>
+    <div id="output">Loading...</div>
+</body>
+</html>
