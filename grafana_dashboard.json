@@ -1,0 +1,13 @@
+{
+  "dashboard": {
+    "title": "Stock Market Tracker Dashboard",
+    "panels": [
+      {
+        "type": "graph",
+        "title": "Stock Prices (Last 5 Days)",
+        "targets": [],
+        "datasource": "Prometheus"
+      }
+    ]
+  }
+}
