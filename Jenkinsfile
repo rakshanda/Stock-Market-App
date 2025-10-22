@@ -48,10 +48,13 @@ pipeline {
     }
 
     post {
-        success {
-            echo "✅ Stock Market Tracker deployed successfully!"
-            sh 'docker images'
-            sh 'docker ps -a'
-        }
-        failure {
-            echo "❌ Deployment failed. Please c
+    success {
+        echo "✅ Stock Market Tracker deployed successfully!"
+        sh 'docker images'
+        sh 'docker ps -a'
+    }
+    failure {
+        echo "❌ Deployment failed. Please check Jenkins logs."
+        sh 'docker ps -a'
+    }
+}
