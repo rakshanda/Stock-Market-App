@@ -12,7 +12,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo "🐳 Building Docker image for Stock Market App..."
-                sh 'docker build -t stock-market-app:latest ./app'
+                sh 'docker build -t stock-market-app:latest .'
             }
         }
 
