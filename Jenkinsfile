@@ -2,50 +2,43 @@ pipeline {
     agent any
 
     environment {
-        # 🔑 Inject your Alpha Vantage API key here (or use Jenkins credentials)
-        ALPHA_VANTAGE_API_KEY = 'KNV8I6IPKC1LQ6YO'
+    # 🔑 Inject your Alpha Vantage API key here (or use Jenkins credentials)
+    ALPHA_VANTAGE_API_KEY = 'KNV8I6IPKC1LQ6YO'
     }
 
     stages {
         stage('Checkout Code') {
             steps {
                 echo "📥 Pulling latest Stock Market App code from GitHub..."
-                git branch: 'main', url: 'https://github.com/rakshanda/Stock-Market-App.git'
+                git credentialsId: 'github-token', branch: 'main', url: 'https://github.com/rakshanda/Stock-Market-App.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 echo "🐳 Building Docker image for Stock Market App..."
-                sh '''
-                    docker build -t stock-market-app:latest .
-                '''
-            }
-        }
-
-        stage('Cleanup Old Containers/Images') {
-            steps {
-                echo "🧹 Cleaning up old containers and images..."
-                sh '''
-                    if [ "$(docker ps -aq -f name=stock-market-container)" ]; then
-                        docker rm -f stock-market-container
-                    fi
-                    docker image prune -f
-                '''
+                sh 'docker build -t stock-market-app:latest .'
             }
         }
 
         stage('Run Docker Container') {
             steps {
                 echo "🚀 Running Stock Market App container..."
-                sh '''
-                    echo "🟢 Starting container on port 5000..."
-                    docker run -d \
-                        --name stock-market-container \
-                        -p 5000:5000 \
-                        -e ALPHA_VANTAGE_API_KEY=${ALPHA_VANTAGE_API_KEY} \
-                        stock-market-app:latest
-                '''
+                script {
+                    // Clean up existing container if it exists
+                    sh '''
+                        if [ "$(docker ps -aq -f name=stock-market-container)" ]; then
+                            echo "🧹 Removing existing container..."
+                            docker rm -f stock-market-container
+                        fi
+                    '''
+
+                    // Start new container with port mapping
+                    sh '''
+                        echo "🟢 Starting new Stock Market App container on port 5000..."
+                        docker run -d --name stock-market-container -p 5000:5000 stock-market-app:latest
+                    '''
+                }
             }
         }
 
