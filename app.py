@@ -3,7 +3,7 @@ import requests
 
 app = Flask(__name__)
 
-API_KEY = "KNV8I6IPKC1LQ6YO"
+API_KEY = "API_KEY-jk"
 BASE_URL = "https://www.alphavantage.co/query"
 
 # List of 10 stock symbols
