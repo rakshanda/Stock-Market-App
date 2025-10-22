@@ -3,7 +3,7 @@ pipeline {
 
     environment {
     # 🔑 Inject your Alpha Vantage API key here (or use Jenkins credentials)
-    ALPHA_VANTAGE_API_KEY = 'KNV8I6IPKC1LQ6YO'
+    ALPHA_VANTAGE_API_KEY = 'API-KEY'
     }
 
     stages {
