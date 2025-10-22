@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-    # 🔑 Inject your Alpha Vantage API key here (or use Jenkins credentials)
-    ALPHA_VANTAGE_API_KEY = 'API-KEY'
+        // 🔑 Inject your Alpha Vantage API key here (or use Jenkins credentials)
+        ALPHA_VANTAGE_API_KEY = 'API-KEY'
     }
 
     stages {
