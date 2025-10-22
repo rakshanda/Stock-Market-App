@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 echo "📥 Pulling latest Stock Market Tracker code from GitHub..."
-                git branch: 'main', url: 'https://github.com/rakshanda/Stock-Market-Tracker.git'
+                git credentialsId: 'github-token', branch: 'main', url: 'https://github.com/rakshanda/Stock-Market-Tracker.git'
             }
         }
 
@@ -54,8 +54,4 @@ pipeline {
             sh 'docker ps -a'
         }
         failure {
-            echo "❌ Deployment failed. Please check Jenkins logs."
-            sh 'docker ps -a'
-        }
-    }
-}
+            echo "❌ Deployment failed. Please c
