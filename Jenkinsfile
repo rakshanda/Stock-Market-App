@@ -6,7 +6,7 @@ pipeline {
             steps {
                 echo "📥 Pulling latest Stock Market App code from GitHub..."
                 git credentialsId: 'github-token', branch: 'main',
-                    url: 'https://github.com/rakshanda/Stock‑Market‑App.git'
+                    url: 'https://github.com/rakshanda/Stock-Market-App.git'
             }
         }
 
