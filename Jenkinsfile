@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 echo '📥 Pulling latest Stock Market App code from GitHub...'
-                git credentialsId: 'github-token', url: 'https://github.com/rakshanda/Stock-Market-App.git'
+                git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/rakshanda/Stock-Market-App.git'
             }
         }
 
