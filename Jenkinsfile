@@ -1,78 +1,61 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE_NAME = "stock-market-tracker"
-        CONTAINER_NAME = "stock-tracker-container"
-        AWS_REGION = "us-east-1"
-        TF_DIR = "terraform"
-        ANSIBLE_DIR = "ansible"
-        APP_DIR = "app"
-        MONITORING_DIR = "monitoring"
-    }
-
     stages {
-
         stage('Checkout Code') {
             steps {
-                echo "📥 Cloning repository..."
-                git branch: 'main', url: 'https://github.com/rakshanda/Stock-Market-App.git'
-            }
-        }
-
-        stage('Provision Infrastructure with Terraform') {
-            steps {
-                echo "🏗️ Provisioning AWS infrastructure..."
-                dir("${TF_DIR}") {
-                    sh '''
-                        terraform init
-                        terraform apply -auto-approve
-                    '''
-                }
+                echo "📥 Pulling latest Stock Market Tracker code from GitHub..."
+                git branch: 'main', url: 'https://github.com/rakshanda/Stock-Market-Tracker.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                echo "🐳 Building Docker image for the application..."
-                dir("${APP_DIR}") {
-                    sh "docker build -t ${IMAGE_NAME}:latest ."
-                }
+                echo "🐳 Building Docker image for Stock Market Tracker..."
+                sh 'docker build -t stock-market-tracker:latest ./app'
             }
         }
 
-        stage('Configure and Deploy with Ansible') {
+        stage('Run Docker Container') {
             steps {
-                echo "⚙️ Configuring EC2 instance and deploying app using Ansible..."
-                dir("${ANSIBLE_DIR}") {
+                echo "🚀 Running Stock Market Tracker container..."
+                script {
+                    // Clean up existing container if it exists
                     sh '''
-                        ansible-playbook -i inventory.ini playbook.yml
+                        if [ "$(docker ps -aq -f name=stock-market-container)" ]; then
+                            echo "🧹 Removing existing container..."
+                            docker rm -f stock-market-container
+                        fi
+                    '''
+
+                    // Start new container with port mapping (5000 for Flask)
+                    sh '''
+                        echo "🟢 Starting new Stock Market Tracker container on port 5000..."
+                        docker run -d --name stock-market-container -p 5000:5000 stock-market-tracker:latest
                     '''
                 }
             }
         }
 
-        stage('Start Monitoring Stack') {
+        stage('Verify Deployment') {
             steps {
-                echo "📊 Deploying Prometheus and Grafana..."
-                dir("${MONITORING_DIR}") {
-                    // Assume Docker Compose is used for monitoring stack
-                    sh 'docker-compose up -d'
-                }
+                echo "🔍 Checking if container is running properly..."
+                sh '''
+                    docker ps | grep stock-market-container || (echo "❌ Container not running!" && exit 1)
+                '''
             }
         }
-
     }
 
     post {
         success {
-            echo "✅ Deployment completed successfully!"
+            echo "✅ Stock Market Tracker deployed successfully!"
             sh 'docker images'
             sh 'docker ps -a'
         }
         failure {
-            echo "❌ Deployment failed. Please check logs."
-            sh 'docker ps -a || true'
+            echo "❌ Deployment failed. Please check Jenkins logs."
+            sh 'docker ps -a'
         }
     }
 }
