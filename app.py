@@ -24,6 +24,6 @@ def get_stock_price(symbol):
     latest_date = list(daily.keys())[0]
     price = daily[latest_date]["4. close"]
     return jsonify({"symbol": symbol, "price": price})
-    
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
